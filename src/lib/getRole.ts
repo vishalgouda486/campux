@@ -1,14 +1,16 @@
-import { adminEmails, facultyEmails } from "./roles";
+import { prisma } from "./prisma";
 
-export function getRole(email: string) {
+export async function getRole(email: string) {
 
-  if (adminEmails.includes(email)) {
-    return "admin";
+  const userRole = await prisma.userRole.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!userRole) {
+    return "student";
   }
 
-  if (facultyEmails.includes(email)) {
-    return "faculty";
-  }
-
-  return "student";
+  return userRole.role;
 }

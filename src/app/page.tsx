@@ -31,14 +31,14 @@ export default function HomePage() {
         <div className="flex items-center gap-4">
 
           <Link
-            href="/sign-in"
+            href="/login"
             className="px-5 py-3 rounded-2xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
           >
             Sign In
           </Link>
 
           <Link
-            href="/redirect"
+            href="/signup"
             className="px-6 py-3 rounded-2xl bg-black text-white hover:opacity-90 transition"
           >
             Get Started
@@ -83,14 +83,14 @@ export default function HomePage() {
             <div className="flex flex-wrap gap-4 mt-10">
 
               <Link
-                href="/redirect"
+                href="/signup"
                 className="bg-black text-white px-8 py-4 rounded-2xl text-lg font-medium hover:opacity-90 transition"
               >
                 Open Dashboard
               </Link>
 
               <Link
-                href="/sign-in"
+                href="/login"
                 className="bg-white border border-gray-300 px-8 py-4 rounded-2xl text-lg font-medium hover:bg-gray-100 transition"
               >
                 Sign In

@@ -2,18 +2,52 @@
 
 import { useEffect, useState } from "react";
 
-type Timetable = {
+const DAYS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+const PERIODS = [
+  {
+    period: 1,
+    label: "9:30 AM - 10:30 AM",
+  },
+  {
+    period: 2,
+    label: "11:00 AM - 12:00 PM",
+  },
+  {
+    period: 3,
+    label: "12:00 PM - 1:00 PM",
+  },
+  {
+    period: 4,
+    label: "2:00 PM - 3:00 PM",
+  },
+  {
+    period: 5,
+    label: "3:00 PM - 4:00 PM",
+  },
+  {
+    period: 6,
+    label: "4:00 PM - 5:00 PM",
+  },
+];
+
+type Entry = {
   id: string;
 
   day: string;
 
-  startTime: string;
-  endTime: string;
+  period: number;
 
   classroom: string;
 
   semester: number;
-  department: string;
 
   subject: {
     name: string;
@@ -26,214 +60,261 @@ type Timetable = {
 
 export default function AdminTimetablePage() {
 
-  const [timetable, setTimetable] = useState<Timetable[]>([]);
+  const [semester, setSemester] = useState(1);
 
-  const [form, setForm] = useState({
-    day: "",
-    startTime: "",
-    endTime: "",
-    classroom: "",
+  const [entries, setEntries] = useState<Entry[]>([]);
 
-    semester: 6,
-
-    department: "CSE",
-
-    subjectId: "",
-    facultyId: "",
-  });
-
-  async function fetchTimetable() {
+  async function loadTimetable() {
 
     const res = await fetch("/api/timetable");
 
     const data = await res.json();
 
-    setTimetable(data.timetable);
+    setEntries(data.timetable || []);
+  }
+
+  async function generateTimetable() {
+
+    const res = await fetch(
+      "/api/timetable/create",
+      {
+        method: "POST",
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+
+      alert(
+        "Timetable Generated Successfully"
+      );
+
+      loadTimetable();
+    }
   }
 
   useEffect(() => {
 
-    fetchTimetable();
+    loadTimetable();
 
   }, []);
 
-  async function createTimetable() {
+  function getCell(
+    day: string,
+    period: number
+  ) {
 
-    await fetch("/api/timetable/create", {
-
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify(form),
-    });
-
-    alert("Timetable Added");
-
-    fetchTimetable();
+    return entries.find(
+      (item) =>
+        item.semester === semester &&
+        item.day === day &&
+        item.period === period
+    );
   }
 
   return (
+
     <div className="space-y-8">
 
-      {/* Header */}
-      <div>
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
-        <h1 className="text-4xl font-bold text-gray-900">
-          Timetable Management
-        </h1>
+        <div>
 
-        <p className="text-gray-500 mt-2">
-          Create and manage ERP schedules.
-        </p>
+          <h1 className="text-4xl font-bold text-gray-900">
+            Timetable Generator
+          </h1>
 
-      </div>
-
-      {/* Add Timetable */}
-      <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Add Timetable
-        </h2>
-
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
-
-          <input
-            placeholder="Day"
-            className="border border-gray-200 rounded-2xl px-4 py-3 outline-none"
-            onChange={(e) =>
-              setForm({
-                ...form,
-                day: e.target.value,
-              })
-            }
-          />
-
-          <input
-            placeholder="Start Time"
-            className="border border-gray-200 rounded-2xl px-4 py-3 outline-none"
-            onChange={(e) =>
-              setForm({
-                ...form,
-                startTime: e.target.value,
-              })
-            }
-          />
-
-          <input
-            placeholder="End Time"
-            className="border border-gray-200 rounded-2xl px-4 py-3 outline-none"
-            onChange={(e) =>
-              setForm({
-                ...form,
-                endTime: e.target.value,
-              })
-            }
-          />
-
-          <input
-            placeholder="Classroom"
-            className="border border-gray-200 rounded-2xl px-4 py-3 outline-none"
-            onChange={(e) =>
-              setForm({
-                ...form,
-                classroom: e.target.value,
-              })
-            }
-          />
-
-          <input
-            placeholder="Subject ID"
-            className="border border-gray-200 rounded-2xl px-4 py-3 outline-none"
-            onChange={(e) =>
-              setForm({
-                ...form,
-                subjectId: e.target.value,
-              })
-            }
-          />
-
-          <input
-            placeholder="Faculty ID"
-            className="border border-gray-200 rounded-2xl px-4 py-3 outline-none"
-            onChange={(e) =>
-              setForm({
-                ...form,
-                facultyId: e.target.value,
-              })
-            }
-          />
+          <p className="text-gray-500 mt-2">
+            BCA Semester Timetable
+          </p>
 
         </div>
 
-        <button
-          onClick={createTimetable}
-          className="mt-6 bg-black text-white px-6 py-3 rounded-2xl hover:opacity-90 transition"
-        >
-          Create Timetable
-        </button>
+        <div className="flex gap-3">
+
+          <select
+            value={semester}
+            onChange={(e) =>
+              setSemester(
+                Number(e.target.value)
+              )
+            }
+            className="border rounded-2xl px-4 py-3"
+          >
+
+            <option value={1}>
+              Semester 1
+            </option>
+
+            <option value={2}>
+              Semester 2
+            </option>
+
+            <option value={3}>
+              Semester 3
+            </option>
+
+            <option value={4}>
+              Semester 4
+            </option>
+
+            <option value={5}>
+              Semester 5
+            </option>
+
+            <option value={6}>
+              Semester 6
+            </option>
+
+          </select>
+
+          <button
+            onClick={generateTimetable}
+            className="bg-black text-white px-6 py-3 rounded-2xl"
+          >
+            Generate Timetable
+          </button>
+
+        </div>
 
       </div>
 
-      {/* Timetable List */}
-      <div className="space-y-5">
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-auto">
 
-        {timetable.map((item) => (
+        <table className="min-w-full">
 
-          <div
-            key={item.id}
-            className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm"
-          >
+          <thead>
 
-            <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5">
+            <tr>
 
-              <div>
+              <th className="border p-4 bg-gray-50 min-w-[150px]">
+                Time
+              </th>
 
-                <div className="flex items-center gap-3 mb-3">
+              {DAYS.map((day) => (
 
-                  <div className="bg-blue-100 text-blue-700 px-4 py-2 rounded-xl text-sm font-medium">
-                    {item.day}
-                  </div>
+                <th
+                  key={day}
+                  className="border p-4 bg-gray-50 min-w-[220px]"
+                >
+                  {day}
+                </th>
 
-                  <div className="bg-green-100 text-green-700 px-4 py-2 rounded-xl text-sm font-medium">
-                    Sem {item.semester}
-                  </div>
+              ))}
 
-                </div>
+            </tr>
 
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {item.subject.name}
-                </h2>
+          </thead>
 
-                <p className="text-gray-500 mt-2">
-                  Faculty: {item.faculty.name}
-                </p>
+          <tbody>
 
-                <p className="text-gray-500 mt-1">
-                  Room: {item.classroom}
-                </p>
+            {PERIODS.map((slot) => (
 
-              </div>
+              <tr key={slot.period}>
 
-              <div className="flex flex-wrap gap-3">
+                <td className="border p-4 font-semibold bg-gray-50">
 
-                <div className="bg-gray-100 px-5 py-3 rounded-2xl font-medium text-gray-800">
-                  {item.startTime}
-                </div>
+                  {slot.label}
 
-                <div className="bg-blue-600 text-white px-5 py-3 rounded-2xl font-medium">
-                  {item.endTime}
-                </div>
+                </td>
 
-              </div>
+                {DAYS.map((day) => {
 
-            </div>
+                  const cell = getCell(
+                    day,
+                    slot.period
+                  );
 
-          </div>
+                  return (
 
-        ))}
+                    <td
+                      key={`${day}-${slot.period}`}
+                      className="border p-3 h-[120px] align-top"
+                    >
+
+                      {cell ? (
+
+                        <div className="bg-blue-50 rounded-2xl p-3 h-full">
+
+                          <div className="font-bold text-blue-900 text-sm">
+
+                            {cell.subject.name}
+
+                          </div>
+
+                          <div className="text-xs text-gray-600 mt-2">
+
+                            {cell.faculty.name}
+
+                          </div>
+
+                          <div className="text-xs text-gray-500 mt-1">
+
+                            {cell.classroom}
+
+                          </div>
+
+                        </div>
+
+                      ) : (
+
+                        <div className="text-gray-300 text-sm">
+
+                          Free
+
+                        </div>
+
+                      )}
+
+                    </td>
+
+                  );
+                })}
+
+              </tr>
+
+            ))}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <div className="bg-white rounded-3xl p-6 border border-gray-100">
+
+        <h2 className="font-bold text-xl mb-3">
+          College Rules
+        </h2>
+
+        <ul className="space-y-2 text-gray-600">
+
+          <li>
+            • Working Hours: 9 AM - 5 PM
+          </li>
+
+          <li>
+            • 30 Minute Break
+          </li>
+
+          <li>
+            • 1 Hour Lunch Break
+          </li>
+
+          <li>
+            • Movie Screening: 1 Hour Weekly
+          </li>
+
+          <li>
+            • Student Activity: 1 Hour Weekly
+          </li>
+
+          <li>
+            • Labs: 2 Continuous Hours
+          </li>
+
+        </ul>
 
       </div>
 

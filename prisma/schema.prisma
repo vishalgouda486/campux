@@ -8,103 +8,177 @@ datasource db {
 }
 
 model Student {
-  id          String   @id @default(cuid())
-  name        String
-  email       String   @unique
-  department  String
-  semester    Int
+  id         String @id @default(cuid())
+  name       String
+  email      String @unique
+  department String
+  semester   Int
 
-  attendance  Attendance[]
-  marks       Mark[]
+  attendance Attendance[]
+  marks      Mark[]
 
   attendanceRecords AttendanceRecord[]
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model Faculty {
-  id          String   @id @default(cuid())
-  name        String
-  email       String   @unique
-  department  String
+  id String @id @default(cuid())
 
-  subjects    Subject[]
+  name  String
+  email String @unique
+
+  department String
+
+  designation String?
+
+  specialization String?
+
+  isTeaching Boolean @default(true)
+
+  subjects Subject[]
 
   timetables Timetable[]
 
-  createdAt   DateTime @default(now())
+  loads FacultyLoad[]
+
+  createdAt DateTime @default(now())
 }
 
 model Subject {
-  id          String   @id @default(cuid())
-  name        String
+  id String @id @default(cuid())
 
-  facultyId   String
-  faculty     Faculty  @relation(fields: [facultyId], references: [id])
+  name String
 
-  marks       Mark[]
-  attendance  Attendance[]
+  code String?
+
+  semester Int
+
+  type String
+
+  weeklyHours Int
+
+  facultyId String?
+
+  faculty Faculty? @relation(fields: [facultyId], references: [id])
+
+  marks      Mark[]
+  attendance Attendance[]
 
   attendanceRecords AttendanceRecord[]
+
   timetables Timetable[]
 }
 
 model Attendance {
-  id          String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  studentId   String
-  student     Student  @relation(fields: [studentId], references: [id])
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
 
-  subjectId   String
-  subject     Subject  @relation(fields: [subjectId], references: [id])
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
 
-  percentage  Float
+  percentage Float
 }
 
 model Mark {
-  id          String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  studentId   String
-  student     Student  @relation(fields: [studentId], references: [id])
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
 
-  subjectId   String
-  subject     Subject  @relation(fields: [subjectId], references: [id])
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
 
-  internal    Float
-  assignment  Float
+  internal   Float
+  assignment Float
 }
 
 model AttendanceRecord {
-  id          String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  studentId   String
-  student     Student  @relation(fields: [studentId], references: [id])
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
 
-  subjectId   String
-  subject     Subject  @relation(fields: [subjectId], references: [id])
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
 
-  date        DateTime @default(now())
+  date DateTime @default(now())
 
-  status      String
+  status String
 }
 
 model Timetable {
-  id          String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  day         String
-  startTime   String
-  endTime     String
+  day String
 
-  classroom   String
+  period Int
 
-  semester    Int
-  department  String
+  startTime String
+  endTime   String
 
-  subjectId   String
-  subject     Subject  @relation(fields: [subjectId], references: [id])
+  classroom String
 
-  facultyId   String
-  faculty     Faculty  @relation(fields: [facultyId], references: [id])
+  roomType String @default("CLASSROOM")
 
-  createdAt   DateTime @default(now())
+  semester   Int
+  department String
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  facultyId String
+  faculty   Faculty @relation(fields: [facultyId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model UserRole {
+  id String @id @default(cuid())
+
+  email String @unique
+
+  role String
+
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id String @id @default(cuid())
+
+  name String
+
+  email String @unique
+
+  password String
+
+  role String
+
+  createdAt DateTime @default(now())
+}
+
+model Classroom {
+  id String @id @default(cuid())
+
+  roomNumber String @unique
+
+  isLab Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model FacultyLoad {
+  id String @id @default(cuid())
+
+  facultyId String
+
+  faculty Faculty @relation(fields: [facultyId], references: [id])
+
+  day String
+
+  totalClasses Int
+
+  createdAt DateTime @default(now())
 }
