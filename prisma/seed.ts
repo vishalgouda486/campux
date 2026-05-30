@@ -10,12 +10,21 @@ async function main() {
   console.log("Cleaning old data...");
 
   await prisma.timetable.deleteMany();
+
+  await prisma.facultyLoad.deleteMany();
+
   await prisma.attendance.deleteMany();
+
   await prisma.mark.deleteMany();
+
   await prisma.attendanceRecord.deleteMany();
+
   await prisma.subject.deleteMany();
+
   await prisma.student.deleteMany();
+
   await prisma.faculty.deleteMany();
+
   await prisma.classroom.deleteMany();
 
   console.log("Creating classrooms...");
@@ -232,6 +241,42 @@ async function main() {
       },
     });
   }
+
+  console.log("Creating students...");
+
+for (let sem = 1; sem <= 6; sem++) {
+
+  for (let i = 1; i <= 20; i++) {
+
+    await prisma.student.create({
+
+      data: {
+
+        name: `BCA${sem} Student ${i}`,
+
+        email: `bca${sem}student${i}@campux.com`,
+
+        department: "BCA",
+
+        semester: sem,
+      },
+    });
+  }
+}
+
+  await prisma.student.create({
+
+  data: {
+
+    name: "Vishalgouda Patil",
+
+    email: "vishalgouda486@gmail.com",
+
+    department: "BCA",
+
+    semester: 6,
+  },
+});
 
   console.log("Done.");
 }

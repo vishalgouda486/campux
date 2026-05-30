@@ -26,11 +26,14 @@ export async function GET(req: Request) {
     });
   }
 
+  const student =
+  await prisma.student.findUnique({
+      where: {
+        email,
+      },
+    });
+
   return Response.json({
-    student: {
-      name: user.name,
-      department: "CSE",
-      semester: 6,
-    },
+    student,
   });
 }
