@@ -1,223 +1,170 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Student = {
   id: string;
   name: string;
+  semester: number;
 };
 
 type Subject = {
   id: string;
   name: string;
+  semester: number;
 };
 
 export default function FacultyAttendancePage() {
+  const [students, setStudents] = useState<Student[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState("");
+  const [absentStudents, setAbsentStudents] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [students, setStudents] =
-    useState<Student[]>([]);
+  async function loadData() {
+    const facultyEmail = localStorage.getItem("campux-email") || "";
+    const subjectsRes = await fetch(`/api/marks?facultyEmail=${facultyEmail}`);
+    const subjectsData = await subjectsRes.json();
+    const availableSubjects = subjectsData.subjects || [];
 
-  const [subjects, setSubjects] =
-    useState<Subject[]>([]);
+    setSubjects(availableSubjects);
 
-  const [selectedSubject, setSelectedSubject] =
-    useState("");
-
-  const [absentStudents, setAbsentStudents] =
-    useState<string[]>([]);
-
-  useEffect(() => {
-
-    async function loadData() {
-
-      const subjectsRes =
-        await fetch("/api/subjects");
-
-      const subjectsData =
-        await subjectsRes.json();
-
-      setSubjects(
-        subjectsData.subjects || []
-      );
-
-      const studentsRes =
-        await fetch("/api/student/list");
-
-      const studentsData =
-        await studentsRes.json();
-
-      setStudents(
-        studentsData.students || []
-      );
+    if (!selectedSubject && availableSubjects[0]?.id) {
+      setSelectedSubject(availableSubjects[0].id);
     }
 
-    loadData();
+    const studentsRes = await fetch("/api/student/list");
+    const studentsData = await studentsRes.json();
 
+    setStudents(studentsData.students || []);
+  }
+
+  useEffect(() => {
+    async function loadInitialData() {
+      await loadData();
+    }
+
+    loadInitialData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function toggleAbsent(id: string) {
+  const selected = subjects.find((subject) => subject.id === selectedSubject);
+  const semesterStudents = useMemo(
+    () =>
+      selected
+        ? students.filter((student) => student.semester === selected.semester)
+        : [],
+    [selected, students]
+  );
 
+  function toggleAbsent(id: string) {
     setAbsentStudents((prev) =>
-      prev.includes(id)
-        ? prev.filter((s) => s !== id)
-        : [...prev, id]
+      prev.includes(id) ? prev.filter((studentId) => studentId !== id) : [...prev, id]
     );
   }
 
   async function submitAttendance() {
+    if (!selectedSubject) return;
 
-    if (!selectedSubject) {
+    setIsSubmitting(true);
 
-      alert("Select Subject");
-
-      return;
-    }
-
-    for (const student of students) {
-
-      const status =
-        absentStudents.includes(student.id)
-          ? "ABSENT"
-          : "PRESENT";
-
-      await fetch("/api/attendance", {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-
-        body: JSON.stringify({
-
-          studentId: student.id,
-
-          subjectId:
-            selectedSubject,
-
-          status,
-        }),
-      });
-    }
-
-    alert(
-      "Attendance Submitted Successfully"
+    await Promise.all(
+      semesterStudents.map((student) =>
+        fetch("/api/attendance", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            studentId: student.id,
+            subjectId: selectedSubject,
+            status: absentStudents.includes(student.id) ? "ABSENT" : "PRESENT",
+          }),
+        })
+      )
     );
+
+    setAbsentStudents([]);
+    setIsSubmitting(false);
   }
 
   return (
-
     <div className="space-y-8">
-
-      <div>
-
-        <h1 className="text-4xl font-bold">
-
-          Attendance Management
-
-        </h1>
-
-      </div>
-
-      <div className="bg-white rounded-3xl p-6 border">
-
-        <div className="mb-6">
-
-          <label className="block mb-2 font-medium">
-
-            Select Subject
-
-          </label>
-
-          <select
-            value={selectedSubject}
-            onChange={(e) =>
-              setSelectedSubject(
-                e.target.value
-              )
-            }
-            className="border rounded-xl p-3 w-full"
-          >
-
-            <option value="">
-              Select Subject
-            </option>
-
-            {subjects.map((subject) => (
-
-              <option
-                key={subject.id}
-                value={subject.id}
-              >
-
-                {subject.name}
-
-              </option>
-            ))}
-
-          </select>
-
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900">
+            Attendance Management
+          </h1>
+          <p className="text-gray-500 mt-2">
+            Mark attendance only for students in the selected subject semester.
+          </p>
         </div>
 
-        <button
-          onClick={submitAttendance}
-          className="bg-blue-600 text-white px-6 py-3 rounded-xl mb-6"
+        <select
+          value={selectedSubject}
+          onChange={(event) => {
+            setSelectedSubject(event.target.value);
+            setAbsentStudents([]);
+          }}
+          className="border rounded-2xl px-4 py-3 bg-white min-w-72"
         >
+          {subjects.map((subject) => (
+            <option key={subject.id} value={subject.id}>
+              Sem {subject.semester} - {subject.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-          Submit Attendance
+      <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">
+              {selected?.name || "Select a subject"}
+            </h2>
+            <p className="text-gray-500 mt-1">
+              {semesterStudents.length} students loaded
+            </p>
+          </div>
 
-        </button>
+          <button
+            onClick={submitAttendance}
+            disabled={isSubmitting || !selectedSubject}
+            className="bg-blue-600 text-white px-6 py-3 rounded-xl disabled:opacity-60"
+          >
+            {isSubmitting ? "Submitting" : "Submit Attendance"}
+          </button>
+        </div>
 
         <div className="space-y-3">
-
-          {students.map((student) => {
-
-            const isAbsent =
-              absentStudents.includes(
-                student.id
-              );
+          {semesterStudents.map((student) => {
+            const isAbsent = absentStudents.includes(student.id);
 
             return (
-
               <div
                 key={student.id}
-                className="flex justify-between border rounded-xl p-4"
+                className="flex justify-between border border-gray-100 rounded-xl p-4"
               >
-
-                <span>
-
-                  {student.name}
-
-                </span>
+                <div>
+                  <p className="font-semibold text-gray-900">{student.name}</p>
+                  <p className="text-sm text-gray-500">
+                    Semester {student.semester}
+                  </p>
+                </div>
 
                 <button
-                  onClick={() =>
-                    toggleAbsent(
-                      student.id
-                    )
-                  }
+                  onClick={() => toggleAbsent(student.id)}
                   className={`px-4 py-2 rounded-lg text-white ${
-                    isAbsent
-                      ? "bg-red-500"
-                      : "bg-green-500"
+                    isAbsent ? "bg-red-500" : "bg-green-500"
                   }`}
                 >
-
-                  {isAbsent
-                    ? "Absent"
-                    : "Present"}
-
+                  {isAbsent ? "Absent" : "Present"}
                 </button>
-
               </div>
             );
           })}
-
         </div>
-
       </div>
-
     </div>
   );
 }

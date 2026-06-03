@@ -2,10 +2,23 @@
 
 import { useEffect, useState } from "react";
 
+type Faculty = {
+  id: string;
+  name: string;
+};
+
+type Subject = {
+  id: string;
+  name: string;
+  semester: number;
+  type: string;
+  facultyId: string | null;
+};
+
 export default function SubjectPage() {
 
-  const [subjects, setSubjects] = useState<any[]>([]);
-  const [faculty, setFaculty] = useState<any[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [faculty, setFaculty] = useState<Faculty[]>([]);
 
   async function loadData() {
 
@@ -18,7 +31,11 @@ export default function SubjectPage() {
   }
 
   useEffect(() => {
-    loadData();
+    async function loadInitialData() {
+      await loadData();
+    }
+
+    loadInitialData();
   }, []);
 
   async function assignFaculty(

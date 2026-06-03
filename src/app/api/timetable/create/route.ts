@@ -1,263 +1,172 @@
+import { buildTimetable } from "@/lib/timetable-engine";
 import { prisma } from "@/lib/prisma";
 
-export async function POST() {
-
-  try {
-
-    await prisma.timetable.deleteMany();
-
-    await prisma.facultyLoad.deleteMany();
-
-    const subjects = await prisma.subject.findMany({
-      include: {
-        faculty: true,
-      },
-    });
-
-    const DAYS = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-
-    const PERIODS = [
-      { period: 1, start: "9:30 AM", end: "10:30 AM" },
-      { period: 2, start: "11:00 AM", end: "12:00 PM" },
-      { period: 3, start: "12:00 PM", end: "1:00 PM" },
-      { period: 4, start: "2:00 PM", end: "3:00 PM" },
-      { period: 5, start: "3:00 PM", end: "4:00 PM" },
-      { period: 6, start: "4:00 PM", end: "5:00 PM" },
-    ];
-
-    const facultyLoads = new Map<string, number>();
-
-    for (let semester = 1; semester <= 6; semester++) {
-
-      const room = `Room ${semester}`;
-
-      const semSubjects = subjects.filter(
-        (s) => s.semester === semester
-      );
-
-      let dayIndex = 0;
-      let periodIndex = 0;
-
-      for (const subject of semSubjects) {
-
-        const facultyId = subject.facultyId!;
-
-        // LAB SUBJECTS
-        if (subject.type === "LAB") {
-
-          const day = DAYS[dayIndex];
-
-          const loadKey =
-            `${facultyId}-${day}`;
-
-          const currentLoad =
-            facultyLoads.get(loadKey) || 0;
-
-          if (currentLoad < 4) {
-
-            if (
-              periodIndex >= PERIODS.length - 1
-            ) {
-
-              periodIndex = 0;
-
-              dayIndex++;
-
-              if (dayIndex >= DAYS.length) {
-                dayIndex = 0;
-              }
-            }
-
-            const slot1 =
-              PERIODS[periodIndex];
-
-            const slot2 =
-              PERIODS[periodIndex + 1];
-
-            await prisma.timetable.create({
-
-              data: {
-
-                day,
-
-                period: slot1.period,
-
-                startTime: slot1.start,
-
-                endTime: slot1.end,
-
-                classroom: `Lab ${
-                  (semester % 4) + 1
-                }`,
-
-                roomType: "LAB",
-
-                semester,
-
-                department: "BCA",
-
-                subjectId: subject.id,
-
-                facultyId,
-              },
-            });
-
-            await prisma.timetable.create({
-
-              data: {
-
-                day,
-
-                period: slot2.period,
-
-                startTime: slot2.start,
-
-                endTime: slot2.end,
-
-                classroom: `Lab ${
-                  (semester % 4) + 1
-                }`,
-
-                roomType: "LAB",
-
-                semester,
-
-                department: "BCA",
-
-                subjectId: subject.id,
-
-                facultyId,
-              },
-            });
-
-            facultyLoads.set(
-              loadKey,
-              currentLoad + 2
-            );
-
-            periodIndex += 2;
-          }
-
-          continue;
-        }
-
-        // THEORY SUBJECTS
-        for (
-          let h = 0;
-          h < subject.weeklyHours;
-          h++
-        ) {
-
-          const day =
-            DAYS[dayIndex];
-
-          const loadKey =
-            `${facultyId}-${day}`;
-
-          const currentLoad =
-            facultyLoads.get(loadKey) || 0;
-
-          if (currentLoad >= 4) {
-
-            dayIndex++;
-
-            if (dayIndex >= DAYS.length) {
-              dayIndex = 0;
-            }
-
-            continue;
-          }
-
-          const slot =
-            PERIODS[periodIndex];
-
-          await prisma.timetable.create({
-
-            data: {
-
-              day,
-
-              period: slot.period,
-
-              startTime: slot.start,
-
-              endTime: slot.end,
-
-              classroom: room,
-
-              roomType: "CLASSROOM",
-
-              semester,
-
-              department: "BCA",
-
-              subjectId: subject.id,
-
-              facultyId,
-            },
-          });
-
-          facultyLoads.set(
-            loadKey,
-            currentLoad + 1
-          );
-
-          periodIndex++;
-
-          if (
-            periodIndex >= PERIODS.length
-          ) {
-
-            periodIndex = 0;
-
-            dayIndex++;
-
-            if (
-              dayIndex >= DAYS.length
-            ) {
-
-              dayIndex = 0;
-            }
-          }
-        }
-      }
-    }
-
-    for (const [key, total] of facultyLoads) {
-
-      const [facultyId, day] =
-        key.split("-");
-
-      await prisma.facultyLoad.create({
-
-        data: {
-
-          facultyId,
-
-          day,
-
-          totalClasses: total,
+const ACTIVITY_SUBJECTS = [
+  "Movie Screening",
+  "Student Activity",
+];
+
+async function ensureActivitySubjects() {
+  const teachingFaculty = await prisma.faculty.findMany({
+    where: {
+      isTeaching: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  if (teachingFaculty.length === 0) {
+    throw new Error("At least one teaching faculty member is required.");
+  }
+
+  const subjects = [];
+  let activityIndex = 0;
+
+  for (let semester = 1; semester <= 6; semester += 1) {
+    for (const activityName of ACTIVITY_SUBJECTS) {
+      const existing = await prisma.subject.findFirst({
+        where: {
+          name: activityName,
+          semester,
+          type: "ACTIVITY",
         },
       });
+
+      if (existing) {
+        subjects.push(existing);
+        continue;
+      }
+
+      const created = await prisma.subject.create({
+        data: {
+          name: activityName,
+          semester,
+          type: "ACTIVITY",
+          weeklyHours: 1,
+          facultyId: teachingFaculty[activityIndex % teachingFaculty.length].id,
+        },
+      });
+
+      subjects.push(created);
+      activityIndex += 1;
+    }
+  }
+
+  return subjects;
+}
+
+export async function POST() {
+  try {
+    await ensureActivitySubjects();
+
+    const [subjects, faculty, rooms] = await Promise.all([
+      prisma.subject.findMany({
+        where: {
+          OR: [
+            {
+              facultyId: null,
+            },
+            {
+              faculty: {
+                isTeaching: true,
+              },
+            },
+          ],
+        },
+        orderBy: [
+          {
+            semester: "asc",
+          },
+          {
+            type: "asc",
+          },
+          {
+            name: "asc",
+          },
+        ],
+      }),
+      prisma.faculty.findMany({
+        where: {
+          isTeaching: true,
+        },
+        orderBy: {
+          name: "asc",
+        },
+      }),
+      prisma.classroom.findMany({
+        orderBy: {
+          roomNumber: "asc",
+        },
+      }),
+    ]);
+
+    if (faculty.length === 0) {
+      return Response.json(
+        {
+          success: false,
+          message: "Create at least one teaching faculty before generating.",
+        },
+        {
+          status: 400,
+        }
+      );
     }
 
-    return Response.json({
-      success: true,
+    if (rooms.length === 0) {
+      return Response.json(
+        {
+          success: false,
+          message: "Create classrooms and labs before generating.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const result = buildTimetable({
+      subjects,
+      faculty,
+      rooms,
     });
 
+    await prisma.$transaction(async (tx) => {
+      await tx.timetable.deleteMany();
+      await tx.facultyLoad.deleteMany();
+
+      if (result.slots.length > 0) {
+        await tx.timetable.createMany({
+          data: result.slots,
+        });
+      }
+
+      if (result.loads.length > 0) {
+        await tx.facultyLoad.createMany({
+          data: result.loads,
+        });
+      }
+    });
+
+    return Response.json({
+      success: result.validation.unscheduled.length === 0,
+      message:
+        result.validation.unscheduled.length === 0
+          ? "Smart timetable generated successfully."
+          : "Timetable generated with unscheduled items.",
+      validation: result.validation,
+    });
   } catch (error) {
+    console.error(error);
 
-    console.log(error);
-
-    return Response.json({
-      success: false,
-    });
+    return Response.json(
+      {
+        success: false,
+        message: "Failed to generate timetable.",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

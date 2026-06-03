@@ -9,23 +9,33 @@ export async function GET(req: Request) {
 
     const studentId =
       searchParams.get("studentId");
-
-    if (!studentId) {
-
-      return Response.json({
-        success: false,
-      });
-    }
+    const subjectId =
+      searchParams.get("subjectId");
+    const semester =
+      searchParams.get("semester");
 
     const records =
       await prisma.attendanceRecord.findMany({
 
         where: {
-          studentId,
+          ...(studentId ? { studentId } : {}),
+          ...(subjectId ? { subjectId } : {}),
+          ...(semester
+            ? {
+                student: {
+                  semester: Number(semester),
+                },
+              }
+            : {}),
         },
 
         include: {
           subject: true,
+          student: true,
+        },
+
+        orderBy: {
+          date: "desc",
         },
       });
 
@@ -82,6 +92,7 @@ export async function POST(req: Request) {
       studentId,
       subjectId,
       status,
+      date,
     } = body;
 
     await prisma.attendanceRecord.create({
@@ -93,6 +104,8 @@ export async function POST(req: Request) {
         subjectId,
 
         status,
+
+        ...(date ? { date: new Date(date) } : {}),
       },
     });
 

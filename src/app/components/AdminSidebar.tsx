@@ -10,6 +10,7 @@ import {
   Bell,
   ClipboardList,
   GraduationCap,
+  BookOpen,
 } from "lucide-react";
 
 const links = [
@@ -29,9 +30,19 @@ const links = [
     icon: Users,
   },
   {
+    name: "Subjects",
+    href: "/admin/subjects",
+    icon: BookOpen,
+  },
+  {
     name: "Time Table",
     href: "/admin/timetable",
     icon: CalendarDays,
+  },
+  {
+    name: "Marks",
+    href: "/admin/marks",
+    icon: GraduationCap,
   },
   {
     name: "Announcements",

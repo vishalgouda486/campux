@@ -10,12 +10,12 @@ type Notification = {
   createdAt: string;
 };
 
-export default function NotificationsPage() {
+export default function FacultyNotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
     async function loadNotifications() {
-      const res = await fetch("/api/notifications?audience=STUDENT");
+      const res = await fetch("/api/notifications?audience=FACULTY");
       const data = await res.json();
 
       setNotifications(data.notifications || []);
@@ -29,7 +29,7 @@ export default function NotificationsPage() {
       <div>
         <h1 className="text-4xl font-bold text-gray-900">Notifications</h1>
         <p className="text-gray-500 mt-2">
-          Academic updates and notices from the department.
+          Department updates for teaching faculty.
         </p>
       </div>
 

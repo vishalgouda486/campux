@@ -159,6 +159,22 @@ model User {
   createdAt DateTime @default(now())
 }
 
+model Notification {
+  id String @id @default(cuid())
+
+  title String
+
+  message String
+
+  category String @default("ANNOUNCEMENT")
+
+  audience String @default("ALL")
+
+  createdBy String?
+
+  createdAt DateTime @default(now())
+}
+
 model Classroom {
   id String @id @default(cuid())
 

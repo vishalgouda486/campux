@@ -2,16 +2,38 @@
 
 import { useEffect, useState } from "react";
 
+type Student = {
+  id: string;
+  name: string;
+};
+
+type AttendanceRecord = {
+  id: string;
+  date: string;
+  status: string;
+  subject?: {
+    name: string;
+  };
+};
+
+type AttendanceSummary = {
+  percentage: number;
+  total: number;
+  present: number;
+  absent: number;
+  records: AttendanceRecord[];
+};
+
 export default function StudentAttendancePage() {
 
   const [loading, setLoading] =
     useState(true);
 
   const [attendance, setAttendance] =
-    useState<any>(null);
+    useState<AttendanceSummary | null>(null);
 
   const [student, setStudent] =
-    useState<any>(null);
+    useState<Student | null>(null);
 
   useEffect(() => {
 
@@ -169,7 +191,7 @@ export default function StudentAttendancePage() {
         <div className="space-y-4">
 
           {attendance?.records?.map(
-            (record: any) => (
+            (record) => (
 
               <div
                 key={record.id}
