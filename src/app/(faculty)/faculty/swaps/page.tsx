@@ -6,6 +6,8 @@ type SlotDetail = {
   id: string;
   day: string;
   period: number;
+  startTime: string;
+  endTime: string;
   subjectName: string;
   semester: number;
   classroom: string;
