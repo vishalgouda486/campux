@@ -14,7 +14,9 @@ type ResultRow = {
     name: string;
     semester: number;
   };
-  internal: number;
+  internal1: number;
+  internal2: number;
+  internal3: number;
   assignment: number;
   total: number;
   status: string;
@@ -80,9 +82,9 @@ export default function ResultsPage() {
       <div className="grid md:grid-cols-4 gap-6">
         {[
           ["Subjects", summary.totalSubjects],
-          ["Average", `${summary.average}%`],
-          ["Passed", summary.passCount],
-          ["Needs Work", summary.needsImprovement],
+          ["Average Total Marks", `${summary.average}`],
+          ["Passed Subjects", summary.passCount],
+          ["Needs Improvement", summary.needsImprovement],
         ].map(([label, value]) => (
           <div
             key={label}
@@ -95,19 +97,21 @@ export default function ResultsPage() {
       </div>
 
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="grid grid-cols-[1.6fr_120px_120px_120px_150px] gap-4 bg-gray-50 px-6 py-4 text-sm font-semibold text-gray-600">
+        <div className="grid grid-cols-[1.5fr_90px_90px_90px_110px_90px_130px] gap-4 bg-gray-50 px-6 py-4 text-sm font-semibold text-gray-600">
           <div>Subject</div>
-          <div>Internal</div>
-          <div>Assignment</div>
-          <div>Total</div>
-          <div>Status</div>
+          <div className="text-center">Int 1</div>
+          <div className="text-center">Int 2</div>
+          <div className="text-center">Int 3</div>
+          <div className="text-center">Assignment</div>
+          <div className="text-center">Total</div>
+          <div className="text-center">Status</div>
         </div>
 
         <div className="divide-y">
           {rows.map((row) => (
             <div
               key={row.id}
-              className="grid grid-cols-[1.6fr_120px_120px_120px_150px] gap-4 px-6 py-4 items-center"
+              className="grid grid-cols-[1.5fr_90px_90px_90px_110px_90px_130px] gap-4 px-6 py-4 items-center"
             >
               <div>
                 <p className="font-semibold text-gray-900">{row.subject.name}</p>
@@ -115,10 +119,12 @@ export default function ResultsPage() {
                   Semester {row.subject.semester}
                 </p>
               </div>
-              <div>{row.internal}</div>
-              <div>{row.assignment}</div>
-              <div className="font-semibold">{row.total}</div>
-              <div>
+              <div className="text-center">{row.internal1}</div>
+              <div className="text-center">{row.internal2}</div>
+              <div className="text-center">{row.internal3}</div>
+              <div className="text-center">{row.assignment}</div>
+              <div className="font-semibold text-center">{row.total}</div>
+              <div className="text-center">
                 <span
                   className={`rounded-xl px-3 py-2 text-xs font-semibold ${
                     row.status === "PASS"

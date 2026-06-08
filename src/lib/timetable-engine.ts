@@ -39,6 +39,7 @@ export type TimetableValidation = {
   unscheduled: string[];
 };
 
+// Monday to Saturday classes
 const DAYS = [
   "Monday",
   "Tuesday",
@@ -128,6 +129,11 @@ function getLeastLoadedFaculty(
 ) {
   const candidates = faculty
     .filter((item) => {
+      // STRICT ALLOTMENT: If a specific faculty member is assigned, ONLY consider them.
+      if (preferredFacultyId && item.id !== preferredFacultyId) {
+        return false;
+      }
+
       const load = facultyDayLoad.get(key(item.id, day)) || 0;
       return (
         !busyFaculty.has(key(item.id, day, period)) &&
@@ -135,9 +141,6 @@ function getLeastLoadedFaculty(
       );
     })
     .sort((a, b) => {
-      if (a.id === preferredFacultyId) return -1;
-      if (b.id === preferredFacultyId) return 1;
-
       const aDaily = facultyDayLoad.get(key(a.id, day)) || 0;
       const bDaily = facultyDayLoad.get(key(b.id, day)) || 0;
 

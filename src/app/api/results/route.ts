@@ -36,13 +36,15 @@ export async function GET(req: Request) {
     });
 
     const rows = marks.map((mark) => {
-      const total = mark.internal + mark.assignment;
+      const total = mark.internal1 + mark.internal2 + mark.internal3 + mark.assignment;
 
       return {
         id: mark.id,
         student: mark.student,
         subject: mark.subject,
-        internal: mark.internal,
+        internal1: mark.internal1,
+        internal2: mark.internal2,
+        internal3: mark.internal3,
         assignment: mark.assignment,
         total,
         status: total >= 40 ? "PASS" : "NEEDS_IMPROVEMENT",

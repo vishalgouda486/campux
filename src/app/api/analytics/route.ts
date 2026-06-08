@@ -57,7 +57,7 @@ export async function GET() {
         ? 0
         : Math.round((present / attendanceRecords.length) * 10000) / 100;
     const passCount = marks.filter(
-      (mark) => mark.internal + mark.assignment >= 40
+      (mark) => mark.internal1 + mark.internal2 + mark.internal3 + mark.assignment >= 40
     ).length;
     const passPercentage =
       marks.length === 0 ? 0 : Math.round((passCount / marks.length) * 10000) / 100;

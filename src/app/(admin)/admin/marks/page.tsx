@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 
 type Mark = {
   id: string;
-  internal: number;
+  internal1: number;
+  internal2: number;
+  internal3: number;
   assignment: number;
   student: {
     name: string;
@@ -66,34 +68,40 @@ export default function AdminMarksPage() {
         </select>
       </div>
 
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="grid grid-cols-[1.3fr_1.4fr_100px_100px_100px] gap-4 bg-gray-50 px-6 py-4 text-sm font-semibold text-gray-600">
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden font-sans">
+        <div className="grid grid-cols-[1fr_1.1fr_80px_80px_80px_100px_90px] gap-4 bg-gray-50 px-6 py-4 text-sm font-semibold text-gray-600">
           <div>Student</div>
           <div>Subject</div>
-          <div>Internal</div>
-          <div>Assignment</div>
-          <div>Total</div>
+          <div className="text-center">Int 1</div>
+          <div className="text-center">Int 2</div>
+          <div className="text-center">Int 3</div>
+          <div className="text-center">Assignment</div>
+          <div className="text-center font-bold">Total</div>
         </div>
         <div className="divide-y">
           {marks.map((mark) => (
             <div
               key={mark.id}
-              className="grid grid-cols-[1.3fr_1.4fr_100px_100px_100px] gap-4 px-6 py-4"
+              className="grid grid-cols-[1fr_1.1fr_80px_80px_80px_100px_90px] gap-4 px-6 py-4 items-center"
             >
               <div>
-                <p className="font-semibold">{mark.student.name}</p>
+                <p className="font-semibold text-gray-900">{mark.student.name}</p>
                 <p className="text-sm text-gray-500">
                   Sem {mark.student.semester}
                 </p>
               </div>
-              <div>{mark.subject.name}</div>
-              <div>{mark.internal}</div>
-              <div>{mark.assignment}</div>
-              <div className="font-semibold">{mark.internal + mark.assignment}</div>
+              <div className="text-gray-700">{mark.subject.name}</div>
+              <div className="text-center">{mark.internal1}</div>
+              <div className="text-center">{mark.internal2}</div>
+              <div className="text-center">{mark.internal3}</div>
+              <div className="text-center">{mark.assignment}</div>
+              <div className="font-bold text-center text-blue-900">
+                {mark.internal1 + mark.internal2 + mark.internal3 + mark.assignment}
+              </div>
             </div>
           ))}
           {marks.length === 0 && (
-            <div className="px-6 py-10 text-gray-500">
+            <div className="px-6 py-10 text-gray-500 text-center">
               No marks recorded yet.
             </div>
           )}

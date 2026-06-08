@@ -43,6 +43,14 @@ export async function GET(req: Request) {
           }
         : undefined;
 
+    const marksWhere = semester
+      ? {
+          subject: {
+            semester: Number(semester),
+          },
+        }
+      : {};
+
     const [subjects, students, marks] = await Promise.all([
       prisma.subject.findMany({
         where: subjectWhere,
@@ -65,6 +73,7 @@ export async function GET(req: Request) {
         },
       }),
       prisma.mark.findMany({
+        where: marksWhere,
         include: {
           student: true,
           subject: true,
@@ -110,7 +119,9 @@ export async function POST(req: Request) {
     const body = await req.json();
     const studentId = String(body.studentId || "");
     const subjectId = String(body.subjectId || "");
-    const internal = Number(body.internal || 0);
+    const internal1 = Number(body.internal1 || 0);
+    const internal2 = Number(body.internal2 || 0);
+    const internal3 = Number(body.internal3 || 0);
     const assignment = Number(body.assignment || 0);
 
     if (!studentId || !subjectId) {
@@ -138,7 +149,9 @@ export async function POST(req: Request) {
             id: existing.id,
           },
           data: {
-            internal,
+            internal1,
+            internal2,
+            internal3,
             assignment,
           },
         })
@@ -146,7 +159,9 @@ export async function POST(req: Request) {
           data: {
             studentId,
             subjectId,
-            internal,
+            internal1,
+            internal2,
+            internal3,
             assignment,
           },
         });

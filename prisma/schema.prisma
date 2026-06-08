@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Student {
@@ -91,8 +92,10 @@ model Mark {
   subjectId String
   subject   Subject @relation(fields: [subjectId], references: [id])
 
-  internal   Float
-  assignment Float
+  internal1  Float @default(0)
+  internal2  Float @default(0)
+  internal3  Float @default(0)
+  assignment Float @default(0)
 }
 
 model AttendanceRecord {

@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  const hashedPassword = await bcrypt.hash("password123", 10);
+  const hashedPassword = await bcrypt.hash("Password@123", 10);
   const user = await prisma.user.updateMany({
     where: { email: "vishalgouda486@gmail.com" },
     data: { password: hashedPassword },

@@ -19,6 +19,19 @@ export default function LoginPage() {
 
   async function handleLogin() {
 
+    // Password rules validation
+    const password = form.password;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const hasMinLength = password.length >= 8;
+
+    if (!hasUppercase || !hasLowercase || !hasNumber || !hasSpecial || !hasMinLength) {
+      alert("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character (e.g. @, $, !, %, *, ?, &).");
+      return;
+    }
+
     try {
 
       setLoading(true);

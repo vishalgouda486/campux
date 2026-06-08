@@ -38,7 +38,7 @@ export default function HomePage() {
           </Link>
 
           <Link
-            href="/signup"
+            href="/login"
             className="px-6 py-3 rounded-2xl bg-black text-white hover:opacity-90 transition"
           >
             Get Started
@@ -83,7 +83,7 @@ export default function HomePage() {
             <div className="flex flex-wrap gap-4 mt-10">
 
               <Link
-                href="/signup"
+                href="/login"
                 className="bg-black text-white px-8 py-4 rounded-2xl text-lg font-medium hover:opacity-90 transition"
               >
                 Open Dashboard

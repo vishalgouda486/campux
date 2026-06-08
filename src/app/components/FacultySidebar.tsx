@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import {
   LayoutDashboard,
   CalendarDays,
@@ -46,46 +46,46 @@ const links = [
 ];
 
 export default function FacultySidebar() {
-
   const pathname = usePathname();
+  const [name, setName] = useState("Faculty Member");
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const email = localStorage.getItem("campux-email");
+        if (!email) return;
+        const res = await fetch(`/api/profile?email=${email}`);
+        const data = await res.json();
+        if (data.success && data.user?.name) {
+          setName(data.user.name);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchProfile();
+  }, []);
 
   return (
     <aside className="w-72 min-h-screen bg-white border-r border-gray-200 p-5 hidden md:flex flex-col justify-between">
-
       <div>
-
         {/* Logo */}
         <div className="mb-10">
-
           <div className="flex items-center gap-3">
-
             <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-xl">
               C
             </div>
-
             <div>
-
-              <h1 className="text-2xl font-bold text-gray-900">
-                Campux
-              </h1>
-
-              <p className="text-sm text-gray-500">
-                Faculty Portal
-              </p>
-
+              <h1 className="text-2xl font-bold text-gray-900">Campux</h1>
+              <p className="text-sm text-gray-500">Faculty Portal</p>
             </div>
-
           </div>
-
         </div>
 
         {/* Navigation */}
         <div className="flex flex-col gap-2">
-
           {links.map((link) => {
-
             const Icon = link.icon;
-
             const isActive = pathname === link.href;
 
             return (
@@ -93,7 +93,6 @@ export default function FacultySidebar() {
                 key={link.name}
                 href={link.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300
-                  
                   ${
                     isActive
                       ? "bg-blue-600 text-white"
@@ -101,34 +100,23 @@ export default function FacultySidebar() {
                   }
                 `}
               >
-
                 <Icon size={20} />
-
-                <span className="font-medium">
-                  {link.name}
-                </span>
-
+                <span className="font-medium">{link.name}</span>
               </Link>
             );
           })}
-
         </div>
-
       </div>
 
       {/* Profile */}
       <div className="bg-gray-50 border border-gray-200 rounded-3xl p-4">
-
-        <h3 className="font-semibold text-gray-900">
-          Faculty Access
+        <h3 className="font-semibold text-gray-900 truncate">
+          {name}
         </h3>
-
         <p className="text-sm text-gray-500 mt-1">
           Teaching Panel Enabled
         </p>
-
       </div>
-
     </aside>
   );
 }

@@ -131,22 +131,20 @@ export async function POST() {
       rooms,
     });
 
-    await prisma.$transaction(async (tx) => {
-      await tx.timetable.deleteMany();
-      await tx.facultyLoad.deleteMany();
+    await prisma.timetable.deleteMany();
+    await prisma.facultyLoad.deleteMany();
 
-      if (result.slots.length > 0) {
-        await tx.timetable.createMany({
-          data: result.slots,
-        });
-      }
+    if (result.slots.length > 0) {
+      await prisma.timetable.createMany({
+        data: result.slots,
+      });
+    }
 
-      if (result.loads.length > 0) {
-        await tx.facultyLoad.createMany({
-          data: result.loads,
-        });
-      }
-    });
+    if (result.loads.length > 0) {
+      await prisma.facultyLoad.createMany({
+        data: result.loads,
+      });
+    }
 
     return Response.json({
       success: result.validation.unscheduled.length === 0,
