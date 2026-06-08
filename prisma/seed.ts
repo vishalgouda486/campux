@@ -259,9 +259,9 @@ async function main() {
     { name: "Hindi", code: "25CA103", semester: 1, type: "THEORY", weeklyHours: 3, facultyEmail: "jyotisalgudi@campux.com" },
     { name: "English", code: "25CA101", semester: 1, type: "THEORY", weeklyHours: 3, facultyEmail: "panchamiankolekar@campux.com" },
     { name: "C Programming", code: "25CA104", semester: 1, type: "THEORY", weeklyHours: 4, facultyEmail: "pratibhagudadari@campux.com" },
-    { name: "C Programming Lab", code: "25CA105", semester: 1, type: "LAB", weeklyHours: 4, facultyEmail: "pratibhagudadari@campux.com" },
+    { name: "C Programming Lab", code: "25CA105", semester: 1, type: "LAB", weeklyHours: 2, facultyEmail: "pratibhagudadari@campux.com" },
     { name: "Web Technology", code: "25CA106", semester: 1, type: "THEORY", weeklyHours: 4, facultyEmail: "maheshkulkarni@campux.com" },
-    { name: "Web Technology Lab", code: "25CA107", semester: 1, type: "LAB", weeklyHours: 4, facultyEmail: "maheshkulkarni@campux.com" },
+    { name: "Web Technology Lab", code: "25CA107", semester: 1, type: "LAB", weeklyHours: 2, facultyEmail: "maheshkulkarni@campux.com" },
     { name: "Mathematics", code: "25CA108", semester: 1, type: "THEORY", weeklyHours: 4, facultyEmail: "nishaamble@campux.com" },
     { name: "Constitutional Values- I", code: "25CA109", semester: 1, type: "THEORY", weeklyHours: 2, facultyEmail: "anupamakawale@campux.com" },
 
@@ -270,20 +270,20 @@ async function main() {
     { name: "Hindi", code: "25CA203", semester: 2, type: "THEORY", weeklyHours: 3, facultyEmail: "jyotisalgudi@campux.com" },
     { name: "English", code: "25CA201", semester: 2, type: "THEORY", weeklyHours: 3, facultyEmail: "panchamiankolekar@campux.com" },
     { name: "Data Structures using C", code: "25CA204", semester: 2, type: "THEORY", weeklyHours: 4, facultyEmail: "priyankapatil@campux.com" },
-    { name: "Data Structures using C Lab", code: "25CA205", semester: 2, type: "LAB", weeklyHours: 4, facultyEmail: "priyankapatil@campux.com" },
+    { name: "Data Structures using C Lab", code: "25CA205", semester: 2, type: "LAB", weeklyHours: 2, facultyEmail: "priyankapatil@campux.com" },
     { name: "Database Management Systems", code: "25CA206", semester: 2, type: "THEORY", weeklyHours: 4, facultyEmail: "niveditagaonkar@campux.com" },
-    { name: "Database Management Systems Lab", code: "25CA207", semester: 2, type: "LAB", weeklyHours: 4, facultyEmail: "niveditagaonkar@campux.com" },
+    { name: "Database Management Systems Lab", code: "25CA207", semester: 2, type: "LAB", weeklyHours: 2, facultyEmail: "niveditagaonkar@campux.com" },
     { name: "Operating System", code: "25CA208", semester: 2, type: "THEORY", weeklyHours: 4, facultyEmail: "laxmihiremath@campux.com" },
-    { name: "Advanced Excel and AI Tools", code: "25CA209", semester: 2, type: "LAB", weeklyHours: 2, facultyEmail: "shripad@campux.com" },
+    { name: "Advanced Excel and AI Tools", code: "25CA209", semester: 2, type: "THEORY", weeklyHours: 2, facultyEmail: "shripad@campux.com" },
 
     // SEM 3
     { name: "Kannada", code: "25CA302", semester: 3, type: "THEORY", weeklyHours: 3, facultyEmail: "laxmihiremath@campux.com" },
     { name: "Hindi", code: "25CA303", semester: 3, type: "THEORY", weeklyHours: 3, facultyEmail: "pranatikaroli@campux.com" },
     { name: "English", code: "25CA301", semester: 3, type: "THEORY", weeklyHours: 3, facultyEmail: "anupamakawale@campux.com" },
     { name: "Java Programming", code: "25CA304", semester: 3, type: "THEORY", weeklyHours: 4, facultyEmail: "pramodambannavar@campux.com" },
-    { name: "Java Programming Lab", code: "25CA305", semester: 3, type: "LAB", weeklyHours: 4, facultyEmail: "pramodambannavar@campux.com" },
+    { name: "Java Programming Lab", code: "25CA305", semester: 3, type: "LAB", weeklyHours: 2, facultyEmail: "pramodambannavar@campux.com" },
     { name: "Python Programming", code: "25CA306", semester: 3, type: "THEORY", weeklyHours: 4, facultyEmail: "bhagyashreegundakalle@campux.com" },
-    { name: "Python Programming Lab", code: "25CA307", semester: 3, type: "LAB", weeklyHours: 4, facultyEmail: "bhagyashreegundakalle@campux.com" },
+    { name: "Python Programming Lab", code: "25CA307", semester: 3, type: "LAB", weeklyHours: 2, facultyEmail: "bhagyashreegundakalle@campux.com" },
     { name: "DAA", code: "25CA308", semester: 3, type: "THEORY", weeklyHours: 4, facultyEmail: "jyotisalgudi@campux.com" },
     { name: "EVS", code: "25CA309", semester: 3, type: "THEORY", weeklyHours: 2, facultyEmail: "anupamakawale@campux.com" },
 
@@ -292,30 +292,30 @@ async function main() {
     { name: "Hindi", code: "25CA403", semester: 4, type: "THEORY", weeklyHours: 3, facultyEmail: "pranatikaroli@campux.com" },
     { name: "English", code: "25CA401", semester: 4, type: "THEORY", weeklyHours: 3, facultyEmail: "anupamakawale@campux.com" },
     { name: "Advanced Java", code: "25CA404", semester: 4, type: "THEORY", weeklyHours: 4, facultyEmail: "pramodambannavar@campux.com" },
-    { name: "Advanced Java Lab", code: "25CA405", semester: 4, type: "LAB", weeklyHours: 4, facultyEmail: "pramodambannavar@campux.com" },
+    { name: "Advanced Java Lab", code: "25CA405", semester: 4, type: "LAB", weeklyHours: 2, facultyEmail: "pramodambannavar@campux.com" },
     { name: "Software Engineering and Testing", code: "25CA406", semester: 4, type: "THEORY", weeklyHours: 4, facultyEmail: "pallavimudhol@campux.com" },
-    { name: "Software Engineering and Testing Lab", code: "25CA407", semester: 4, type: "LAB", weeklyHours: 4, facultyEmail: "pallavimudhol@campux.com" },
+    { name: "Software Engineering and Testing Lab", code: "25CA407", semester: 4, type: "LAB", weeklyHours: 2, facultyEmail: "pallavimudhol@campux.com" },
     { name: "Computer Networks", code: "25CA408", semester: 4, type: "THEORY", weeklyHours: 4, facultyEmail: "riteshundale@campux.com" },
-    { name: "Power BI", code: "25CA409", semester: 4, type: "LAB", weeklyHours: 2, facultyEmail: "vikrammarali@campux.com" },
+    { name: "Power BI", code: "25CA409", semester: 4, type: "THEORY", weeklyHours: 2, facultyEmail: "vikrammarali@campux.com" },
 
     // SEM 5
     { name: "Android Programming", code: "24CA501", semester: 5, type: "THEORY", weeklyHours: 4, facultyEmail: "nikitadalawayi@campux.com" },
-    { name: "Android Programming Lab", code: "24CA502", semester: 5, type: "LAB", weeklyHours: 4, facultyEmail: "nikitadalawayi@campux.com" },
+    { name: "Android Programming Lab", code: "24CA502", semester: 5, type: "LAB", weeklyHours: 2, facultyEmail: "nikitadalawayi@campux.com" },
     { name: "Data Science using R", code: "24CA503", semester: 5, type: "THEORY", weeklyHours: 4, facultyEmail: "swaralijoshi@campux.com" },
-    { name: "Data Science using R Lab", code: "24CA504", semester: 5, type: "LAB", weeklyHours: 4, facultyEmail: "swaralijoshi@campux.com" },
+    { name: "Data Science using R Lab", code: "24CA504", semester: 5, type: "LAB", weeklyHours: 2, facultyEmail: "swaralijoshi@campux.com" },
     { name: "AI Part I", code: "24CA505", semester: 5, type: "THEORY", weeklyHours: 4, facultyEmail: "rohitdeshpande@campux.com" },
     { name: "Cyber Security", code: "24CA506", semester: 5, type: "THEORY", weeklyHours: 4, facultyEmail: "shreyasmardolkar@campux.com" },
     { name: "Digital Marketing", code: "24CA507", semester: 5, type: "THEORY", weeklyHours: 4, facultyEmail: "pratibhagudadari@campux.com" },
-    { name: "Internship", code: "24CA508", semester: 5, type: "LAB", weeklyHours: 2, facultyEmail: "vikrammarali@campux.com" },
+    { name: "Internship", code: "24CA508", semester: 5, type: "THEORY", weeklyHours: 2, facultyEmail: "vikrammarali@campux.com" },
 
     // SEM 6
     { name: "AI Part II", code: "24CA601", semester: 6, type: "THEORY", weeklyHours: 4, facultyEmail: "rohitdeshpande@campux.com" },
-    { name: "AI Lab", code: "24CA602", semester: 6, type: "LAB", weeklyHours: 4, facultyEmail: "rohitdeshpande@campux.com" },
+    { name: "AI Lab", code: "24CA602", semester: 6, type: "LAB", weeklyHours: 2, facultyEmail: "rohitdeshpande@campux.com" },
     { name: "Big Data", code: "24CA603", semester: 6, type: "THEORY", weeklyHours: 4, facultyEmail: "swaralijoshi@campux.com" },
-    { name: "Big Data Lab", code: "24CA604", semester: 6, type: "LAB", weeklyHours: 4, facultyEmail: "swaralijoshi@campux.com" },
+    { name: "Big Data Lab", code: "24CA604", semester: 6, type: "LAB", weeklyHours: 2, facultyEmail: "swaralijoshi@campux.com" },
     { name: "Cryptography", code: "24CA605", semester: 6, type: "THEORY", weeklyHours: 4, facultyEmail: "shreyasmardolkar@campux.com" },
     { name: "Blockchain", code: "24CA606", semester: 6, type: "THEORY", weeklyHours: 4, facultyEmail: "pranatikaroli@campux.com" },
-    { name: "Project Work", code: "24CA606", semester: 6, type: "LAB", weeklyHours: 4, facultyEmail: "vikrammarali@campux.com" }
+    { name: "Project Work", code: "24CA606", semester: 6, type: "LAB", weeklyHours: 2, facultyEmail: "vikrammarali@campux.com" }
   ];
 
   for (const s of subjectsData) {

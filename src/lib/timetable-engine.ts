@@ -194,7 +194,14 @@ export function buildTimetable(input: {
     const roomName =
       classroomNames[(subject.semester - 1) % Math.max(classroomNames.length, 1)];
 
-    for (const day of DAYS) {
+    // Sort DAYS by how many slots are already scheduled for this semester on each day
+    const dayLoads = DAYS.map(day => {
+      const count = slots.filter(s => s.semester === subject.semester && s.day === day).length;
+      return { day, count };
+    });
+    dayLoads.sort((a, b) => a.count - b.count);
+
+    for (const { day } of dayLoads) {
       for (const period of PERIODS) {
         if (placed >= subject.weeklyHours) return;
         if (busySemesters.has(key(subject.semester, day, period.period))) {
@@ -230,6 +237,7 @@ export function buildTimetable(input: {
         });
 
         placed += 1;
+        break; // Schedule at most 1 hour of this subject per day
       }
     }
 
@@ -244,7 +252,14 @@ export function buildTimetable(input: {
     let placedBlocks = 0;
     const requiredBlocks = Math.ceil(subject.weeklyHours / 2);
 
-    for (const day of DAYS) {
+    // Sort DAYS by how many slots are already scheduled for this semester on each day
+    const dayLoads = DAYS.map(day => {
+      const count = slots.filter(s => s.semester === subject.semester && s.day === day).length;
+      return { day, count };
+    });
+    dayLoads.sort((a, b) => a.count - b.count);
+
+    for (const { day } of dayLoads) {
       for (const startPeriod of LAB_START_PERIODS) {
         if (placedBlocks >= requiredBlocks) return;
 
@@ -261,8 +276,8 @@ export function buildTimetable(input: {
 
         const labName = labNames.find(
           (lab) =>
-            !busyRooms.has(key(lab, day, first.period)) &&
-            !busyRooms.has(key(lab, day, second.period))
+              !busyRooms.has(key(lab, day, first.period)) &&
+              !busyRooms.has(key(lab, day, second.period))
         );
 
         if (!labName) continue;
@@ -312,6 +327,7 @@ export function buildTimetable(input: {
         });
 
         placedBlocks += 1;
+        break; // Schedule at most 1 lab block of this subject per day
       }
     }
 
@@ -324,9 +340,36 @@ export function buildTimetable(input: {
     }
   }
 
+  // 1. Pre-schedule Movie Screening for all semesters at Saturday Period 6
+  const movieScreeningSubjects = input.subjects.filter(
+    (s) => s.name.toLowerCase() === "movie screening"
+  );
+  
+  for (const subject of movieScreeningSubjects) {
+    const roomName = classroomNames[(subject.semester - 1) % Math.max(classroomNames.length, 1)];
+    const period = PERIODS.find((p) => p.period === 6);
+    if (period) {
+      const faculty = input.faculty.find((f) => f.id === subject.facultyId);
+      if (faculty) {
+        reserve({
+          day: "Saturday",
+          period: 6,
+          startTime: period.startTime,
+          endTime: period.endTime,
+          classroom: roomName,
+          roomType: "CLASSROOM",
+          semester: subject.semester,
+          department: "BCA",
+          subjectId: subject.id,
+          facultyId: faculty.id,
+        });
+      }
+    }
+  }
+
   for (let semester = 1; semester <= 6; semester += 1) {
     const semesterSubjects = input.subjects
-      .filter((subject) => subject.semester === semester)
+      .filter((subject) => subject.semester === semester && subject.name.toLowerCase() !== "movie screening")
       .sort((a, b) => {
         if (a.type === b.type) return b.weeklyHours - a.weeklyHours;
         return a.type === "LAB" ? -1 : 1;

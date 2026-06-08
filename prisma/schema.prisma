@@ -201,3 +201,14 @@ model FacultyLoad {
 
   createdAt DateTime @default(now())
 }
+
+model SwapRequest {
+  id                 String   @id @default(cuid())
+  requesterEmail     String
+  requesterSlotId    String
+  targetFacultyEmail String
+  targetSlotId       String
+  status             String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt          DateTime @default(now())
+}
+
